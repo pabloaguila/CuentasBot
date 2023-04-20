@@ -3,6 +3,29 @@ SQL_USER=""
 SQL_PASSWORD=""
 SQL_DATABASE=""
 
+class DuplicateAccountNameError(Exception):
+    pass
+    
+def add_account(name, balance):
+    SQL_statement = ("""INSERT INTO account (name, balance) VALUES (%(name)s, %(balance)s)""")
+    account_data = {"name":name, "balance":balance}
+    cnx = msc.connect(user=SQL_USER, password=SQL_PASSWORD, database=SQL_DATABASE)
+    cur = cnx.cursor()
+    try:
+        cur.execute(SQL_statement, account_data)
+    except msc.Error as account_err:
+        print("The following SQL error ocurred while trying to add an account:")
+        print('"',account_err,'"',sep="")
+        err_code = account_err.args[0]
+        cur.close()
+        cnx.close()
+        if err_code==1062:
+            raise DuplicateAccountNameError
+        else:
+            raise
+    else:
+        cnx.commit()
+
 def update_account_balance(cursor,account_id, trans_type, amount):
     """Function that updates the account balance after a transaction"""
     if(trans_type=="Debit"):
