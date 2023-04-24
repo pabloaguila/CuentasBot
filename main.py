@@ -2,7 +2,8 @@ import logging
 from telegram import Update
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes
 #this is my config.py file which is in .gitignore so that people don't see my bot's token
-from config import BOT_TOKEN
+import os
+from dotenv import load_dotenv
 import re
 import pandas as pd
 """
@@ -60,6 +61,8 @@ async def add_expenditure(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
 
 if __name__ == '__main__':
+    load_dotenv()
+    BOT_TOKEN = os.environ.get("BOT_TOKEN")
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
     start_handler = CommandHandler('start', start)
