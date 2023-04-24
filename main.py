@@ -3,7 +3,8 @@ from telegram import Update
 import mysql.connector as msc
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes
 #this is my config.py file which is in .gitignore so that people don't see my credentials
-from config import BOT_TOKEN, SQL_USER, SQL_PASSWORD, SQL_DATABASE
+import os
+from dotenv import load_dotenv
 import SQL_utils #I wrote this module with the functions that can interact with a SQL database
 import re
 import pandas as pd
@@ -11,10 +12,10 @@ import pandas as pd
 This is a bot that helps you track your expenditures.
 It's a personal project but I hope it will eventually be hosted on a server and available to everybody. 
 """
-
-SQL_utils.SQL_USER=SQL_USER
-SQL_utils.SQL_PASSWORD=SQL_PASSWORD
-SQL_utils.SQL_DATABASE=SQL_DATABASE
+load_dotenv()
+SQL_utils.SQL_USER=os.environ.get("SQL_USER")
+SQL_utils.SQL_PASSWORD=os.environ.get("SQL_PASSWORD")
+SQL_utils.SQL_DATABASE=os.environ.get("SQL_DATABASE")
 
 
 logging.basicConfig(
@@ -121,6 +122,7 @@ async def add_credit(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Credit registered successfully.")
 
 if __name__ == '__main__':
+    BOT_TOKEN = os.environ.get("BOT_TOKEN")
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
     start_handler = CommandHandler('start', start)
