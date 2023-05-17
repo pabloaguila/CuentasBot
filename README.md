@@ -3,7 +3,7 @@ It's a personal project but I hope it will eventually be hosted on a server and 
 
 Installation:
 1. Install a version of Python >= 3.7
-2. Create a virtual environment using ```python -m venv <entorno>```.
+2. Create a virtual environment using ```python -m venv <environment_name>```.
 3. Change to CuentasBot directory and run ```pip install -r requirements.txt``` to install the libraries
 4. Create your own .env file and add there your bot's token 
 
