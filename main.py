@@ -68,7 +68,7 @@ async def create_account(update: Update, context: ContextTypes.DEFAULT_TYPE):
         name = str(account_data[0])
     except IndexError:
         await context.bot.send_message(chat_id=update.effective_chat.id, 
-                                       text="You have to write the account name next to the \create_account command.")
+                                       text="You have to write the account name next to the /create_account command.")
         return
     except Exception as err:
         print(err)
@@ -95,7 +95,7 @@ async def add_debit(update: Update, context: ContextTypes.DEFAULT_TYPE):
         add_expenditure(update, context, trans_type="Debit")
     except SQL_utils.AccountNameError:
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text="The account doesn't exist. You can create a new account with the command \create_account.")
+                                       text="The account doesn't exist. You can create a new account with the command /create_account.")
     except AmountTypeError:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"The value after the '$' symbol has to be an integer.")
     except Exception as err:
@@ -112,7 +112,7 @@ async def add_credit(update: Update, context: ContextTypes.DEFAULT_TYPE):
         add_expenditure(update, context, trans_type="Credit")
     except SQL_utils.AccountNameError:
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text="The account doesn't exist. You can create a new account with the command \create_account.")
+                                       text="The account doesn't exist. You can create a new account with the command /create_account.")
     except AmountTypeError:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"The value after the '$' symbol has to be an integer.")
     except Exception as err:
