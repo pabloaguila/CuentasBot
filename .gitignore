@@ -2,7 +2,7 @@
 config.py
 CuentasBot.py
 gastos.csv
-
+apuntes_mysql_python
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
