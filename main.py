@@ -17,6 +17,7 @@ load_dotenv()
 SQL_utils.SQL_USER = os.environ.get("SQL_USER")
 SQL_utils.SQL_PASSWORD = os.environ.get("SQL_PASSWORD")
 SQL_utils.SQL_DATABASE = os.environ.get("SQL_DATABASE")
+chat_id = int(os.environ.get("CHAT_ID"))
 timedelta_utc_hours = timedelta(hours=-3)
 
 logging.basicConfig(
@@ -26,6 +27,9 @@ logging.basicConfig(
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if (update.effective_chat.id != chat_id):
+        return False
+
     welcome_text = "I help you keep track of your expenses."
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text=welcome_text)
@@ -69,6 +73,9 @@ async def create_account(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """This function receives the update from the handler as a command and gets the
     information of a new account. If everything is ok it adds a new account to a SQL database.
     """
+    if (update.effective_chat.id != chat_id):
+        return False
+
     account_data = context.args
     balance = 0
 
@@ -93,13 +100,15 @@ async def create_account(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Account added successfully.")
 
 
-
 async def add_debit(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """This function receives the update from the handler as a command and gets the
-    information about the debit. Finally it adds that information
-    to a SQL database.
+    """This function receives the update from the handler as a command
+    and gets the information about the debit. Finally it adds that
+    information to a SQL database.
     """
-    try:#try to add the values to a database
+    if (update.effective_chat.id != chat_id):
+        return False
+
+    try:  # try to add the values to a database
         add_expenditure(update, context, trans_type="Debit")
     except SQL_utils.AccountNameError:
         await context.bot.send_message(chat_id=update.effective_chat.id,
@@ -111,12 +120,16 @@ async def add_debit(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Debit registered successfully.")
 
+
 async def add_credit(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """This function receives the update from the handler as a command and gets the
-    information about the credit. Finally it adds that information
-    to a SQL database.
+    """This function receives the update from the handler as a command
+    and gets the information about the debit. Finally it adds that
+    information to a SQL database.
     """
-    try:# try to add the values to a database
+    if (update.effective_chat.id != chat_id):
+        return False
+
+    try:  # try to add the values to a database
         add_expenditure(update, context, trans_type="Credit")
     except SQL_utils.AccountNameError:
         await context.bot.send_message(chat_id=update.effective_chat.id,
