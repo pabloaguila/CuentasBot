@@ -4,21 +4,51 @@ import mysql.connector as msc
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes
 import os
 from datetime import timedelta
-from dotenv import load_dotenv
 # I wrote this module with the functions that can interact with a SQL database
 import SQL_utils
 import re
 import pandas as pd
+import boto3
+from botocore.exceptions import ClientError
+import json
+
 """
 This is a bot that helps you track your expenditures.
 It's a personal project but I hope it will eventually be hosted on a server and available to everybody.
 """
-load_dotenv()
-SQL_utils.SQL_USER = os.environ.get("SQL_USER")
-SQL_utils.SQL_PASSWORD = os.environ.get("SQL_PASSWORD")
-SQL_utils.SQL_DATABASE = os.environ.get("SQL_DATABASE")
 chat_id = int(os.environ.get("CHAT_ID"))
 timedelta_utc_hours = timedelta(hours=-3)
+
+# Get credetianls from AWS
+def get_secret():
+    secret_name = os.environ.get("SECRET_NAME")
+    region_name = os.environ.get("REGION_NAME")
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
+    # Decrypts secret using the associated KMS key.
+    secret = get_secret_value_response['SecretString']
+    return secret
+
+secret = get_secret()
+secret = json.loads(secret)
+
+# Set Database credential
+SQL_utils.SQL_USER = secret["username"]
+SQL_utils.SQL_PASSWORD = secret["password"]
+SQL_utils.SQL_DATABASE = secret["dbname"]
+SQL_utils.SQL_HOST = secret["host"]
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

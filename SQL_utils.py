@@ -2,6 +2,7 @@ import mysql.connector as msc
 SQL_USER=""
 SQL_PASSWORD=""
 SQL_DATABASE=""
+SQL_HOST=""
 
 class DuplicateAccountNameError(Exception):
     pass
@@ -9,7 +10,7 @@ class DuplicateAccountNameError(Exception):
 def add_account(name, balance):
     SQL_statement = ("""INSERT INTO account (name, balance) VALUES (%(name)s, %(balance)s)""")
     account_data = {"name":name, "balance":balance}
-    cnx = msc.connect(user=SQL_USER, password=SQL_PASSWORD, database=SQL_DATABASE)
+    cnx = msc.connect(user=SQL_USER, password=SQL_PASSWORD, database=SQL_DATABASE,host=SQL_HOST)
     cur = cnx.cursor()
     try:
         cur.execute(SQL_statement, account_data)
@@ -65,7 +66,7 @@ def add_transaction(amount, category, description, date, account_name, trans_typ
     SQL_statement = ("""INSERT INTO transaction (amount, category, description, date, account_id, trans_type) """
             """VALUES (%(amount)s, %(category)s, %(description)s, %(date)s, %(account_id)s, %(trans_type)s)""")
 
-    cnx = msc.connect(user=SQL_USER, password=SQL_PASSWORD, database=SQL_DATABASE)
+    cnx = msc.connect(user=SQL_USER, password=SQL_PASSWORD, database=SQL_DATABASE, host=SQL_HOST)
     cur = cnx.cursor()
     account_id = find_account_id(cur, account_name)
     transaction_data = {"amount":amount, "category":category, "description":description, 
